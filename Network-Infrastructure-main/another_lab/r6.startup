@@ -1,0 +1,13 @@
+/etc/init.d/networking restart
+/etc/init.d/quagga restart
+
+ip route add 100.0.0.0/24 via 200.0.0.6
+iptables -F
+iptables -P FORWARD DROP
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -j MASQUERADE
+iptables -t nat -A PREROUTING -i eth0 -p tcp --dport 1194 -j DNAT --to-destination 192.168.0.100:7000
+iptables -t nat -A PREROUTING -i eth1 -p tcp --dport 1194 -j DNAT --to-destination 192.168.0.100:7000
+iptables -A FORWARD -s 192.168.0.0/24 -i eth3 -j ACCEPT
+iptables -A FORWARD -m state --state RELATED, ESTABLISHED -j ACCEPT
+iptables -A FORWARD -i eth0 -p tcp -d 192.168.0.100 --dport 7000 -j ACCEPT
+iptables -A FORWARD -i eth1 -p tcp -d 192.168.0.100 --dport 7000 -j ACCEPT
