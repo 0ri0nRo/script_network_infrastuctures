@@ -1,0 +1,29 @@
+
+	pc1.startup
+# Startup file per pc1
+/etc/init.d/networking restart
+
+ip addr add 192.168.1.100/24 dev eth0
+ip route add default via 192.168.1.1
+
+	r1.startup
+# Startup file per r1
+/etc/init.d/networking restart
+
+ip addr add 192.168.1.1/24 dev eth1
+ip addr add 10.10.10.1/30 dev eth0
+ip route add 10.8.0.0/24 via 10.10.10.2
+
+	r2.startup
+# Startup file per r2
+/etc/init.d/networking restart
+
+ip addr add 10.8.0.1/24 dev eth1
+ip addr add 10.10.10.2/30 dev eth0
+ip route add default via 10.10.10.1
+
+	s1.startup
+# Startup file per s1
+/etc/init.d/networking restart
+
+ip addr add 10.8.0.3/24 dev eth0
