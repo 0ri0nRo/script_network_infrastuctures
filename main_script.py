@@ -60,5 +60,26 @@ def create_device_directories(csv_file):
     
     print("Device directories, interfaces files, lab.conf, and device.startup files created successfully!")
 
+# Used to create <device>/etc/quagga/zebra.conf
+def create_zebra_file(file_name, info):
+
+    eth_list = [info[key] for key in info.keys() if key.startswith('interface_') and info[key] != EMPTY_FIELD]
+    ip_list = [info[key] for key in info.keys() if key.startswith('ip_') and info[key] != EMPTY_FIELD]
+    device_name = info['device']
+
+    file_name = os.path.join( os.path.dirname(file_name), os.path.basename(file_name).split(".")[0])
+    path_to_zebra_file = os.path.join(file_name, "etc", "quagga", "zebra.conf")
+
+    with open(path_to_zebra_file, 'w') as output_file:
+        output_file.write(f"hostname {device_name}\n")
+        output_file.write("password zebra\n")
+        output_file.write("enable password zebra\n\n")
+
+        for i, (eth, ip) in enumerate(zip(eth_list, ip_list)):
+            output_file.write(f"interface eth{eth}\n")
+            output_file.write(f"ip address {ip}\n")
+            output_file.write("link-detect\n\n")
+
+
 # Esegui lo script con il file CSV
 create_device_directories("devices.csv")
