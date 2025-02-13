@@ -1,3 +1,6 @@
+#Attivare venv python
+source venv/bin/activate
+
 #ssh key generate
 
 #Go to client/root and initialize PKI with
