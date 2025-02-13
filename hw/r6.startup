@@ -1,0 +1,35 @@
+/etc/init.d/networking restart
+/etc/init.d/quagga restart
+
+ip route add 100.0.0.0/24 via 200.0.0.6
+
+
+iptables -F
+iptables -t nat -F
+iptables -X
+iptables -t nat -X
+
+# NAT (Masquerade per traffico in uscita su tutte le interfacce esterne)
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eth1 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eth2 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eth3 -j MASQUERADE
+
+# DNAT per inoltrare il traffico OpenVPN alla macchina VPN interna
+iptables -t nat -A PREROUTING -d 200.0.0.7 -p tcp --dport 1194 -j DNAT --to-destination 192.168.0.100:7000
+iptables -t nat -A PREROUTING -d 200.0.0.10 -p tcp --dport 1194 -j DNAT --to-destination 192.168.0.100:7000
+iptables -t nat -A PREROUTING -d 200.0.0.4 -p tcp --dport 1194 -j DNAT --to-destination 192.168.0.100:7000
+
+# Firewall - Consenti connessioni OpenVPN
+# Accetta pacchetti correlati o di connessioni già stabilite
+iptables -A FORWARD -p tcp -m state --state ESTABLISHED,RELATED -j ACCEPT
+
+# Accetta traffico VPN nuovo sulla porta 1194
+iptables -A FORWARD -p tcp --dport 7000 -m state --state NEW -j ACCEPT
+
+# Blocca tutto il traffico non autorizzato
+iptables -A FORWARD -i eth1 -m state --state NEW -j DROP
+iptables -A FORWARD -i eth2 -m state --state NEW -j DROP
+iptables -A FORWARD -i eth3 -m state --state NEW -j DROP
+
+iptables -P FORWARD DROP
+

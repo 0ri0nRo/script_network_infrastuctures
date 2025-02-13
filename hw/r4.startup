@@ -1,0 +1,31 @@
+/etc/init.d/networking restart
+systemctl start frr
+
+# in riferimento al seguente dubbio espresso nella mail:
+# Sul router R4 dobbiamo stabilire delle route statiche oppure no? 
+# Perchè senza route statiche questo non potrebbe rispondere a r1.
+# Il punto 3 dice 
+### Configure static routing on routers r{1,2,3}, so that they can reach all interfaces of r{1,2,3,4}.
+# Ma questo non si può fare senza l'utilizzo di almeno una route statica da parte di r4. 
+# Perché r4 non sapendo come instradare il traffico verso 100.0.0.0/31 non può rispondere al ping (ne a tutto il resto).
+
+
+# Pertanto, aggiungo la route statiche per raggiungere le varie sottoreti di r1, r2 e r3
+# Nel caso dovesse rispondere alla mail dicendo che non è necessario, aggiungere le route statiche
+# basta rimuovere le seguenti righe.
+
+ip route add 100.0.0.0/31 via 100.0.0.8 dev eth1
+ip route add 100.0.0.2/31 via 100.0.0.6 dev eth2
+
+# FINE, la ringrazio per la sua collaborazione.
+
+# Pulizia delle regole esistenti, per debug
+iptables -F
+iptables -t nat -F
+iptables -X
+iptables -t nat -X
+
+
+iptables -A FORWARD -p tcp --dport 22 -j ACCEPT
+iptables -A FORWARD -p tcp --sport 22 -j ACCEPT
+iptables -P FORWARD DROP

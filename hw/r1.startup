@@ -1,0 +1,33 @@
+/etc/init.d/networking restart
+
+ip route add 100.0.0.6/31 via 100.0.0.3 dev eth3
+ip route add 100.0.0.4/31 via 100.0.0.1 dev eth1
+
+ip route add default via 100.0.0.9 dev eth2
+
+# Pulizia delle regole esistenti, per debug
+iptables -F
+iptables -t nat -F
+iptables -X
+iptables -t nat -X
+
+
+# NAT
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eth1 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eth2 -j MASQUERADE
+iptables -t nat -A POSTROUTING -s 192.168.0.0/24 -o eth3 -j MASQUERADE
+
+# ACCEPT established and drop new from outside
+iptables -A FORWARD -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -A FORWARD -m state -d 192.168.0.0/24 -i eth1 --state NEW -j DROP
+iptables -A FORWARD -m state -d 192.168.0.0/24 -i eth2 --state NEW -j DROP
+iptables -A FORWARD -m state -d 192.168.0.0/24 -i eth3 --state NEW -j DROP
+iptables -A FORWARD ! -d 192.168.0.0/24 ! -s 192.168.0.0/24 -j ACCEPT
+
+
+# Accept packets from SSH (TCP:22) and OpenVPN (TCP:1194)
+iptables -A FORWARD -p tcp --dport 22 -j ACCEPT
+iptables -A FORWARD -p tcp --dport 1194 -j ACCEPT
+
+# Drop all other packets
+iptables -P FORWARD DROP

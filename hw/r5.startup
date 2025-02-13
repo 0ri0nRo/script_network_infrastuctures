@@ -1,0 +1,5 @@
+/etc/init.d/networking restart
+systemctl start frr
+# ip route add 100.0.0.0/24 via 193.201.28.1
+
+ip route add default via 200.0.0.9 dev eth2

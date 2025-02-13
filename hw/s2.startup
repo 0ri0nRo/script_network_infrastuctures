@@ -1,0 +1,29 @@
+/etc/init.d/networking restart
+/etc/init.d/ssh restart
+
+# non funzionava in nessun'altro moodo :(
+
+# Create user and home directory
+useradd myuser2 -m
+
+# Set password for user
+echo -e 'ilovessh\nilovessh\n' | passwd myuser2
+
+# Create ssh folder and authorized_keys file
+mkdir /home/myuser2/.ssh
+touch /home/myuser2/.ssh/authorized_keys
+
+# Set correct permissions
+chown myuser2:myuser2 /home/myuser2/.ssh
+chmod 700 /home/myuser2/.ssh
+chown myuser2:myuser2 /home/myuser2/.ssh/authorized_keys
+chmod 600 /home/myuser2/.ssh/authorized_keys
+
+
+while ! [ -e /shared/id_rsa.pub ]; do
+	echo Waiting for public key...
+	sleep 1
+done
+
+cat /shared/id_rsa.pub > /home/myuser2/.ssh/authorized_keys
+rm /shared/id_rsa.pub
