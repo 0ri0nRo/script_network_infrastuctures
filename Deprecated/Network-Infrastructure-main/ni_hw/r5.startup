@@ -1,4 +1,0 @@
-/etc/init.d/networking restart
-systemctl start frr
-
-ip route add default via 200.0.0.9

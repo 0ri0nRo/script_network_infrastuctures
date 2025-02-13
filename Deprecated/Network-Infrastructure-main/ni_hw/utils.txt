@@ -1,4 +1,0 @@
-utente ssh: myuser2
-password ssh: psw
-
-password per vpn e tutte le altre: password

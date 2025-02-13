@@ -1,4 +1,0 @@
-device, interface_0, ip_0, interface_1, ip_1
-pc1,	 0,	<ip>, , 
-r1,	 0,	<ip>, 1,	<ip>
-pc2,	 0,	<ip>, , 
