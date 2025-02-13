@@ -1,0 +1,22 @@
+#ssh key generate
+
+#Go to client/root and initialize PKI with
+./easyrsa init-pki 
+./easy build-ca
+
+#Generate a certificate and private key for the server
+./easyrsa build-server-full SERVER_NAME
+
+#Generate Client certificates and key
+./easyrsa build-client-full CLIENT_NAME
+
+#Generate Diffie-Hellman parameters for the OpenVPN server
+openssl dhparam -out dh22048.pem 2048
+
+#TO launch openVPN instance use 
+openvpn CONF_FILE
+
+#When you're using OpenVPN insert these lines into startup files
+mkdir -p /dev/net
+mknod /dev/net/tun c 10 200
+chmod 600 /dev/net/tun
