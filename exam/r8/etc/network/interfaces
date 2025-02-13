@@ -1,0 +1,15 @@
+auto eth0
+iface eth0 inet static
+	address 200.0.0.1/31
+	gateway 192.168.1.1
+
+auto eth1
+iface eth1 inet static
+	address 200.0.0.3/31
+	gateway 192.168.1.1
+
+auto eth2
+iface eth2 inet static
+	address 200.0.0.5/31
+	gateway 192.168.1.1
+

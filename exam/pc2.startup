@@ -1,0 +1,4 @@
+/etc/init.d/networking restart
+
+ip addr add 150.0.0.100/24 dev eth0
+

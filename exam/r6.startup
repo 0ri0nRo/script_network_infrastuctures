@@ -1,0 +1,9 @@
+/etc/init.d/networking restart
+
+/etc/init.d/quagga restart
+
+ip addr add 192.168.0.1/24 dev eth0
+ip addr add 200.0.0.13/31 dev eth1
+ip addr add 200.0.0.7/31 dev eth2
+ip addr add 200.0.0.1/31 dev eth3
+

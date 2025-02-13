@@ -1,4 +1,0 @@
-# Startup file per s1
-/etc/init.d/networking restart
-
-ip addr add 10.8.0.3/24 dev eth0
