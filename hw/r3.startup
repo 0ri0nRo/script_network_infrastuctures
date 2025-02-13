@@ -1,0 +1,4 @@
+/etc/init.d/networking restart
+
+ip route add default via 100.0.0.2 dev eth0
+
